@@ -116,6 +116,19 @@
     letter-spacing: var(--tracking-normal);
     font-family: var(--font-sans);
   }
+
+  /* Remove default browser focus outline and Tailwind focus ring (dark square border on click) */
+  *:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Radio and checkbox: no outline, no box-shaped ring */
+  input[type="radio"]:focus,
+  input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 
@@ -131,6 +144,18 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Gray border on all text-style inputs and textareas (when not overridden by component classes) */
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+textarea {
+  border-width: 2px;
+  border-style: solid;
+  border-color: #9ca3af;
+}
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+.dark textarea {
+  border-color: #6b7280;
 }
 
 .body{
@@ -202,6 +227,27 @@
   box-shadow: 0 0 14px rgba(255, 255, 255, 0.2);
 }
 
+/* Magic UI: shine border animation (used by ShineBorder component) */
+@keyframes shine {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Magic UI: ripple button animation */
+@keyframes rippling {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.animate-shine {
+  animation: shine var(--duration, 14s) ease-in-out infinite;
+}
+
+.animate-rippling {
+  animation: rippling 600ms ease-out forwards;
+}
+
 /* Force modal panels to be opaque in light and dark (Headless UI Dialog can be portaled) */
 [role="dialog"] {
   background-color: var(--card) !important;
@@ -210,4 +256,11 @@
 /* Ensure modal inner sections (e.g. form cards) are also opaque */
 [role="dialog"] .bg-muted {
   background-color: var(--muted) !important;
+}
+
+/* Force no focus outline/ring on click – overrides Tailwind focus:ring-* utilities */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }

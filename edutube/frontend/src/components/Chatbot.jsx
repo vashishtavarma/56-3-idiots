@@ -119,7 +119,7 @@ const Chatbot = () => {
         <div className="fixed bottom-6 right-6 z-50">
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full p-4 shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-ring"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full p-4 shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-0"
             aria-label="Open chat"
           >
             <MessageCircle size={24} />
@@ -235,14 +235,14 @@ const Chatbot = () => {
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 resize-none border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground placeholder:text-muted-foreground"
+                className="flex-1 resize-none border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-0 bg-background text-foreground placeholder:text-muted-foreground"
                 rows="1"
                 disabled={isLoading}
               />
               <button
                 onClick={sendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed text-primary-foreground rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+                className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed text-primary-foreground rounded-lg p-2 focus:outline-none focus:ring-0 transition-colors"
                 aria-label="Send message"
               >
                 <Send size={16} />

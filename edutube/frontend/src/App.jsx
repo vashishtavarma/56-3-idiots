@@ -51,7 +51,7 @@ function App() {
 
   return (
     <ThemeProvider>
-      {!["/land", "/signup"].includes(location.pathname) && <Navbar />}
+      {location.pathname !== '/land' && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
 
@@ -64,7 +64,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/land" element={<Landing />} />
       </Routes>
-      {!["/land", "/signup"].includes(location.pathname) && <Footer />}
+      {location.pathname === '/land' && <Footer />}
       {isAuthenticated && <Chatbot />}
     </ThemeProvider>
   );

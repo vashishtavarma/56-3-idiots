@@ -79,7 +79,7 @@ const EditChapter = ({openEdit,setOpenEdit, chapterId, chDetails}) => {
             name="chapterName"
             value={chapterName}
             onChange={(e) => setChapterName(e.target.value)}
-            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-2.5"
+            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 block w-full p-2.5"
             placeholder="Chapter name"
             required
           />
@@ -94,7 +94,7 @@ const EditChapter = ({openEdit,setOpenEdit, chapterId, chDetails}) => {
             name="cno"
             value={chapter_no}
             onChange={(e) => setChapter_No(e.target.value)}
-            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-2.5"
+            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 block w-full p-2.5"
             placeholder="Chapter number"
             required
           />
@@ -110,7 +110,7 @@ const EditChapter = ({openEdit,setOpenEdit, chapterId, chDetails}) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Start writing..."
-            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-2.5"
+            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 block w-full p-2.5"
             required
           />
         </div>
@@ -126,7 +126,7 @@ const EditChapter = ({openEdit,setOpenEdit, chapterId, chDetails}) => {
             value={videoLink}
             onChange={(e) => setVideoLink(e.target.value)}
             placeholder="https://youtube.com/..."
-            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-2.5"
+            className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 block w-full p-2.5"
             required
           />
           <p className='text-sm text-foreground'> <span className='text-yellow-500 font-semibold'> Note:</span> To get youtube video url  <br /> {'click on 3 dots -> share -> copy url'}</p>
@@ -134,7 +134,7 @@ const EditChapter = ({openEdit,setOpenEdit, chapterId, chDetails}) => {
 
         <button
           type="submit"
-          className="w-full text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-ring font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          className="w-full text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-0 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
         >
           Done
         </button>

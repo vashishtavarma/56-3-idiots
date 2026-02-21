@@ -1,10 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { getNotesByJourney } from '../Api/notes'; // Import the API function
+import { getNotesByJourney } from '../Api/notes';
 import { useParams } from 'react-router-dom';
 import { getJourneyById } from '../Api/journeys';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { downloadLogo } from '../Constants';
+
+/* Download icon (inline SVG – no external request) */
+const IconDownload = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+  </svg>
+);
+
+/** Force node and descendants to use hex colors so html2canvas (no oklch support) can parse */
+function forceHexColors(node, bg = '#ffffff', text = '#000000', border = '#e5e7eb') {
+  if (!node || !node.style) return;
+  node.style.backgroundColor = bg;
+  node.style.color = text;
+  if (node.style.borderColor !== undefined) node.style.borderColor = border;
+  try {
+    Array.from(node.children || []).forEach((child) => forceHexColors(child, bg, text, border));
+  } catch (_) {}
+}
 
 const Notes = () => {
   const { journeyId } = useParams(); // Get the journeyId from URL params
@@ -29,24 +46,29 @@ const Notes = () => {
     fetchNotes(); // Fetch notes on component mount
   }, [journeyId]); // Re-run if journeyId changes
 
-  // Function to handle PDF generation and download
+  // Function to handle PDF generation and download (html2canvas does not support oklch, so we force hex in clone)
   const downloadPDF = () => {
-    const input = document.getElementById('notesContent'); // Target the notes content for PDF
+    const input = document.getElementById('notesContent');
+    if (!input) return;
 
-    // Temporarily change text color to black for better PDF visibility
-    input.style.color = 'black';
-
-    html2canvas(input).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4'); // Create new jsPDF object (A4 size)
-      const imgWidth = 210; // A4 page width
-      const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight); // Add the image data to PDF
-      pdf.save(`${jData.title}_Notes.pdf`); // Save the PDF with the journey title
-
-      // Revert text color back to white after PDF generation
-      input.style.color = '';
-    });
+    html2canvas(input, {
+      useCORS: true,
+      onclone: (_doc, clonedEl) => {
+        forceHexColors(clonedEl, '#ffffff', '#000000', '#e5e7eb');
+      },
+    })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`${jData.title || 'Notes'}_Notes.pdf`);
+      })
+      .catch((err) => {
+        console.error('PDF export failed:', err);
+        alert('Could not generate PDF. Please try again.');
+      });
   };
 
   // Render the notes or a message if there's an error or no notes
@@ -68,7 +90,7 @@ const Notes = () => {
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 rounded mb-6 flex items-center gap-2 transition-colors"
               >
                 <span>Download PDF</span>
-                <img src={downloadLogo} className="invert" width={'25px'} alt="" />
+                <IconDownload className="w-6 h-6 shrink-0" />
               </button>
               <div id="notesContent" className="space-y-4">
                 <h2 className="text-2xl font-bold mb-4 text-foreground">

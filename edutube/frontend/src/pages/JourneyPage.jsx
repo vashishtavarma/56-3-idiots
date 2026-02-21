@@ -125,7 +125,7 @@ const JourneyPage = () => {
           <div className="my-5 me-auto place-content-end place-self-start place-items-center lg:col-span-1">
             <Link
               to={`/notes/${jData.id}`}
-              className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 px-5 py-3 text-center text-base font-medium text-primary-foreground focus:ring-4 focus:ring-ring transition-colors"
+              className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 px-5 py-3 text-center text-base font-medium text-primary-foreground focus:ring-0 transition-colors"
             >
               Notes
             </Link>
@@ -144,7 +144,7 @@ const JourneyPage = () => {
                   id="createProductModalButton"
                   data-modal-target="createProductModal"
                   data-modal-toggle="createProductModal"
-                  className="flex items-center justify-center text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-ring font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
+                  className="flex items-center justify-center text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-0 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
                 >
                   <span className="font-bold text-2xl pb-1 mx-2"> +</span> Add
                   New Chapter
@@ -199,7 +199,7 @@ const JourneyPage = () => {
                             onChange={() => {
                               updateCheckBox(chapter.is_completed, chapter.id);
                             }}
-                            className="w-4 h-4 border border-input rounded bg-background focus:ring-3 focus:ring-ring"
+                            className="w-4 h-4 border border-input rounded bg-background focus:outline-none focus:ring-0"
                           />
                         </td>
                         <th
@@ -251,7 +251,7 @@ const JourneyPage = () => {
 
                   {/* <tr className="border-b border-border">
                     <td className="px-4 py-3 text-md font-semibold">
-                      <input type="checkbox" className="w-4 h-4 border border-input rounded bg-background focus:ring-3 focus:ring-ring" />
+                      <input type="checkbox" className="w-4 h-4 border border-input rounded bg-background focus:outline-none focus:ring-0" />
                     </td>
                     <th
                       scope="row"

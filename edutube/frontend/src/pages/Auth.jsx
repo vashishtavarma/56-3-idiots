@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import EduTubeLogo from "../components/EduTubeLogo";
 import { loginUser, registerUser } from "../Api";
-import { Button } from "@/components/ui/button";
+import { RippleButton } from "@/components/ui/ripple-button";
+import { ShineBorder } from "@/components/ui/shine-border";
 import {
   Card,
   CardContent,
@@ -58,7 +59,14 @@ const Auth = () => {
       <div className="mb-6 flex justify-center">
         <EduTubeLogo asLink={true} size="lg" />
       </div>
-      <Card className="w-full max-w-md border border-border bg-card text-card-foreground shadow">
+      <div className="relative w-full max-w-md rounded-xl [--shine-border-width:3px]">
+        <ShineBorder
+          borderWidth={3}
+          duration={10}
+          shineColor={["#6366f1", "#8b5cf6", "#a855f7"]}
+          className="rounded-xl"
+        />
+        <Card className="relative w-full border-0 bg-card text-card-foreground shadow-xl rounded-xl m-[3px]">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">
             {isLogin ? "Sign in to your account" : "Create an account"}
@@ -115,9 +123,9 @@ const Auth = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full">
+            <RippleButton type="submit" className="w-full">
               {isLogin ? "Sign in" : "Create an account"}
-            </Button>
+            </RippleButton>
             <p className="text-sm text-muted-foreground text-center">
               {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
               {isLogin ? (
@@ -142,6 +150,7 @@ const Auth = () => {
           </CardFooter>
         </form>
       </Card>
+      </div>
     </section>
   );
 };

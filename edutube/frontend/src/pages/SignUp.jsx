@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import EduTubeLogo from '../components/EduTubeLogo';
+import { RippleButton } from '@/components/ui/ripple-button';
+import { ShineBorder } from '@/components/ui/shine-border';
 import styles from './Auth.module.css';
 
 export default function SignUp() {
@@ -31,7 +33,14 @@ export default function SignUp() {
 
   return (
     <div className="auth-page-gradient min-h-screen flex flex-col items-center justify-start pt-16 md:pt-24 p-8">
-      <div className={styles.card}>
+      <div className="relative w-full max-w-[400px] rounded-xl">
+        <ShineBorder
+          borderWidth={3}
+          duration={10}
+          shineColor={['#6366f1', '#8b5cf6', '#a855f7']}
+          className="rounded-xl"
+        />
+        <div className={`${styles.card} relative rounded-xl border-0 shadow-xl m-[3px]`}>
         <div className={styles.cardLogo}>
           <EduTubeLogo asLink={true} size="lg" />
         </div>
@@ -68,9 +77,13 @@ export default function SignUp() {
             required
             autoComplete="new-password"
           />
-          <button type="submit" className={styles.submit} disabled={submitting}>
+          <RippleButton
+            type="submit"
+            className={`${styles.submit} w-full justify-center border-0`}
+            disabled={submitting}
+          >
             {submitting ? 'Creating account…' : 'Sign up'}
-          </button>
+          </RippleButton>
         </form>
         <p className={styles.footer}>
           Already have an account? <Link to="/auth">Sign in here</Link>
@@ -80,6 +93,7 @@ export default function SignUp() {
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
           <a href="https://github.com" target="_blank" rel="noopener noreferrer">Github</a>
           <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer">Dribbble</a>
+        </div>
         </div>
       </div>
     </div>

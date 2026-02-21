@@ -116,7 +116,7 @@ const AddNotes = ({ journeyId, chapterId }) => {
 
           <button
             type="submit"
-            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-primary-foreground bg-primary rounded-lg focus:ring-4 focus:ring-ring hover:bg-primary/90"
+            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-primary-foreground bg-primary rounded-lg focus:ring-0 hover:bg-primary/90"
           >
             Add Notes
           </button>

@@ -55,7 +55,7 @@ const CreateJourney = ({ open, setOpen }) => {
     >
       <DialogBackdrop className="fixed inset-0 bg-black/50 transition-opacity" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4">
+        <div className="flex min-h-full items-center justify-center px-4 pt-20 pb-8 sm:pt-14 sm:pb-12">
           <DialogPanel className="relative transform overflow-hidden rounded-lg border border-border text-left shadow-xl transition-all sm:my-8 w-full max-w-6xl text-foreground bg-card" style={{ backgroundColor: 'var(--card)' }}>
             <div className="px-6 py-8 bg-card" style={{ backgroundColor: 'var(--card)' }}>
               <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
@@ -81,7 +81,7 @@ const CreateJourney = ({ open, setOpen }) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     name="jn"
-                    className="bg-background border border-input text-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-3 placeholder:text-muted-foreground"
+                    className="bg-background border border-input text-foreground text-sm rounded-lg focus:ring-0 block w-full p-3 placeholder:text-muted-foreground"
                     placeholder="Enter journey name"
                     required
                   />
@@ -101,7 +101,7 @@ const CreateJourney = ({ open, setOpen }) => {
                     name="description"
                     rows="4"
                     placeholder="Describe your learning journey..."
-                    className="bg-background border border-input text-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-3 placeholder:text-muted-foreground resize-none"
+                    className="bg-background border border-input text-foreground text-sm rounded-lg focus:ring-0 block w-full p-3 placeholder:text-muted-foreground resize-none"
                     required
                   />
                 </div>
@@ -117,7 +117,7 @@ const CreateJourney = ({ open, setOpen }) => {
                         id="custom-private"
                         name="custom-visibility"
                         value="private"
-                        className="w-4 h-4 text-primary bg-background border-input focus:ring-ring focus:ring-2"
+                        className="w-4 h-4 text-primary bg-background border-input focus:outline-none focus:ring-0"
                         onChange={(e) => setIsPublic(false)}
                         checked={!is_public}
                         required
@@ -135,7 +135,7 @@ const CreateJourney = ({ open, setOpen }) => {
                         id="custom-public"
                         name="custom-visibility"
                         value="public"
-                        className="w-4 h-4 text-primary bg-background border-input focus:ring-ring focus:ring-2"
+                        className="w-4 h-4 text-primary bg-background border-input focus:outline-none focus:ring-0"
                         onChange={(e) => setIsPublic(true)}
                         checked={is_public}
                         required
@@ -152,7 +152,7 @@ const CreateJourney = ({ open, setOpen }) => {
 
                 <button
                   type="submit"
-                  className="w-full text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-ring font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                  className="w-full text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-0 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                   Done
                 </button>
@@ -190,7 +190,7 @@ const CreateJourney = ({ open, setOpen }) => {
                     onChange={(e) => setPlaylist(e.target.value)}
                     name="playlist"
                     placeholder="https://www.youtube.com/playlist?list=..."
-                    className="bg-background border border-input text-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring block w-full p-3 placeholder:text-muted-foreground"
+                    className="bg-background border border-input text-foreground text-sm rounded-lg focus:ring-0 block w-full p-3 placeholder:text-muted-foreground"
                     required
                   />
                 </div>
@@ -206,7 +206,7 @@ const CreateJourney = ({ open, setOpen }) => {
                         id="playlist-private"
                         name="playlist-visibility"
                         value="private"
-                        className="w-4 h-4 text-primary bg-background border-input focus:ring-ring focus:ring-2"
+                        className="w-4 h-4 text-primary bg-background border-input focus:outline-none focus:ring-0"
                         onChange={() => setIsPublic(false)}
                         checked={!is_public}
                         required
@@ -224,7 +224,7 @@ const CreateJourney = ({ open, setOpen }) => {
                         id="playlist-public"
                         name="playlist-visibility"
                         value="public"
-                        className="w-4 h-4 text-primary bg-background border-input focus:ring-ring focus:ring-2"
+                        className="w-4 h-4 text-primary bg-background border-input focus:outline-none focus:ring-0"
                         onChange={() => setIsPublic(true)}
                         checked={is_public}
                         required
@@ -241,7 +241,7 @@ const CreateJourney = ({ open, setOpen }) => {
 
                   <button
                     type="submit"
-                    className="w-full text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-ring font-medium rounded-lg text-sm px-5 py-3 text-center transition-colors duration-200"
+                    className="w-full text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-0 font-medium rounded-lg text-sm px-5 py-3 text-center transition-colors duration-200"
                   >
                     Create from Playlist
                   </button>
