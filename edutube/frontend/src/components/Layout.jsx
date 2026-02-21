@@ -18,7 +18,7 @@ export default function Layout() {
       <header className={styles.header}>
         <Link to="/" className={styles.logo}>
           <span className={styles.logoIcon}>◇</span>
-          Thrive Learn
+          Edutube
         </Link>
         <div className={styles.headerRight}>
           <button
@@ -45,7 +45,7 @@ export default function Layout() {
       </header>
       <main className={styles.main}><Outlet /></main>
       <footer className={styles.footer}>
-        <p>© {new Date().getFullYear()} Thrive Learn. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} EduTube. All rights reserved.</p>
       </footer>
     </div>
   );

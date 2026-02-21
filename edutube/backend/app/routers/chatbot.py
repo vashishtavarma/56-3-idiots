@@ -24,7 +24,7 @@ async def chat(body: ChatRequest):
         genai.configure(api_key=settings.gemini_api_key)
         # Prefer gemini-2.0-flash; fallback to gemini-1.5-flash if needed
         model = genai.GenerativeModel("gemini-2.0-flash")
-        prompt = f"""You are a helpful AI assistant for Thrive Learn, a platform for organizing and tracking learning journeys.
+        prompt = f"""You are a helpful AI assistant for EduTube, a platform for organizing and tracking learning journeys.
 Current context: {body.context or 'General query'}
 User question: {body.message}
 Provide a concise, helpful response. If the question is about "Agent SDK" or technical topics, explain them simply."""
@@ -42,6 +42,6 @@ Provide a concise, helpful response. If the question is about "Agent SDK" or tec
 async def health():
     return HealthResponse(
         status="healthy",
-        service="Thrive Learn Chatbot",
+        service="EduTube Chatbot",
         geminiConfigured=bool(settings.gemini_api_key),
     )
