@@ -1,5 +1,6 @@
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import EduTubeLogo from './EduTubeLogo';
 import styles from './Layout.module.css';
 
 export default function Layout() {
@@ -16,10 +17,7 @@ export default function Layout() {
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
-        <Link to="/" className={styles.logo}>
-          <span className={styles.logoIcon}>◇</span>
-          Edutube
-        </Link>
+        <EduTubeLogo className={styles.logo} />
         <div className={styles.headerRight}>
           <button
             type="button"

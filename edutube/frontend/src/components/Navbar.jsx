@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { applogo, logout, token } from '../Constants'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { logout } from '../Constants'
+import EduTubeLogo from './EduTubeLogo'
 import { getAuthToken } from '../Api/journeys';
 import { useTheme } from '../contexts/ThemeContext';
 
 const Navbar = () => {
     const navigate  = useNavigate();
+    const location = useLocation();
     const [navlinks,setNavlinks] = useState(false);
     const { isDark, toggleTheme } = useTheme();
+    const isAuthPage = location.pathname === '/auth';
     
     const handleLogout = ()=>{
         logout();
@@ -21,12 +24,9 @@ const Navbar = () => {
   return (
     <header>
 
-    <nav className="bg-card border-border border-b px-4 lg:px-6 py-2.5 text-card-foreground">
+    <nav className={`border-border border-b px-4 lg:px-6 py-2.5 text-card-foreground ${isAuthPage ? 'auth-page-gradient' : 'bg-card'}`}>
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-            <Link  to="/" className="flex items-center">
-                <img src={applogo} className="mr-3 h-6 sm:h-9" alt="EduTube Logo" />
-                <span className="self-center text-xl font-semibold whitespace-nowrap text-foreground">EduTube</span>
-            </Link>
+            <EduTubeLogo className="flex items-center" />
             {/* Nav menu (Home, Explore, Profile, Logout): only when logged in */}
               {getAuthToken() && (
                 <div className={`${navlinks ? '' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`} id="mobile-menu-2">

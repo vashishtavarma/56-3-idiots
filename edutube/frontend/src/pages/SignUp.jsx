@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import EduTubeLogo from '../components/EduTubeLogo';
 import styles from './Auth.module.css';
 
 export default function SignUp() {
@@ -29,11 +30,10 @@ export default function SignUp() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className="auth-page-gradient min-h-screen flex flex-col items-center justify-start pt-16 md:pt-24 p-8">
       <div className={styles.card}>
         <div className={styles.cardLogo}>
-          <span className={styles.cardLogoIcon} aria-hidden>◇</span>
-          <span className={styles.cardLogoText}>EduTube</span>
+          <EduTubeLogo asLink={true} size="lg" />
         </div>
         <h1 className={styles.title}>Create your account</h1>
         <form onSubmit={handleSubmit} className={styles.form}>

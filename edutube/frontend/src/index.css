@@ -119,6 +119,14 @@
 }
 
 
+/* Light gradient background for login/signup – shared by Auth, SignUp, and Navbar on /auth */
+.auth-page-gradient {
+  background: linear-gradient(to bottom right, #f8fafc, #e2e8f0, #cbd5e1);
+}
+.dark .auth-page-gradient {
+  background: linear-gradient(to bottom right, #0f172a, #1e293b, #334155);
+}
+
 *{
   margin: 0;
   padding: 0;
@@ -183,6 +191,15 @@
 
 .dark .prose a:hover {
   opacity: 0.9;
+}
+
+/* EduTube logo orb – mercury-style circle, theme-aware (matches landing) */
+.edutube-logo-orb {
+  background: linear-gradient(135deg, #e0e0e0 0%, #8e8e93 45%, #fff 50%, #8e8e93 55%, #4a4a4a 100%);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
+.dark .edutube-logo-orb {
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.2);
 }
 
 /* Force modal panels to be opaque in light and dark (Headless UI Dialog can be portaled) */

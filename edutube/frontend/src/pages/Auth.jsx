@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { applogo } from "../Constants";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import EduTubeLogo from "../components/EduTubeLogo";
 import { loginUser, registerUser } from "../Api";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,7 +54,10 @@ const Auth = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-background px-6 py-8 md:py-12">
+    <section className="min-h-screen flex flex-col items-center justify-start pt-16 md:pt-24 auth-page-gradient px-6 py-8 md:py-12">
+      <div className="mb-6 flex justify-center">
+        <EduTubeLogo asLink={true} size="lg" />
+      </div>
       <Card className="w-full max-w-md border border-border bg-card text-card-foreground shadow">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">
