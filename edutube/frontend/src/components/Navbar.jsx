@@ -68,7 +68,7 @@ const Navbar = () => {
               className={`${navOpen ? 'flex' : 'hidden'} flex-col w-full lg:flex lg:flex-row lg:items-center lg:flex-1 lg:justify-center lg:order-2 order-3 lg:min-w-0`}
               id="main-nav"
             >
-              <ul className="flex flex-col mt-2 font-medium lg:flex-row lg:items-center lg:gap-6 lg:mt-0 lg:py-0">
+              <ul className="flex flex-col mt-2 font-medium lg:flex-row lg:items-center lg:gap-12 lg:mt-0 lg:py-0">
                 <li>
                   <Link
                     to="/"
@@ -104,7 +104,7 @@ const Navbar = () => {
           )}
 
           {/* Right: theme toggle + profile dropdown (when logged in) */}
-          <div className="flex items-center gap-0.5 order-2 lg:order-3">
+          <div className="flex items-center gap-3 order-2 lg:order-3 lg:ml-4">
             <button
               type="button"
               onClick={toggleTheme}

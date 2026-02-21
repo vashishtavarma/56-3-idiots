@@ -15,11 +15,12 @@ def _oid(s: str) -> ObjectId | None:
         return None
 
 
-async def create_note(chapter_id: str, journey_id: str, content: str) -> str:
+async def create_note(chapter_id: str, journey_id: str, content: str, title: str | None = None) -> str:
     db = get_db()
     result = await db.notes.insert_one(
         {
             "content": content,
+            "title": (title or "").strip() or None,
             "chapter_id": chapter_id,
             "journey_id": journey_id,
             "created_at": datetime.utcnow(),
@@ -59,14 +60,18 @@ async def get_note_by_id(note_id: str) -> dict | None:
     return doc_to_note(doc)
 
 
-async def update_note(note_id: str, content: str) -> bool:
+async def update_note(note_id: str, content: str | None = None, title: str | None = None) -> bool:
     oid = _oid(note_id)
     if not oid:
         return False
-    r = await get_db().notes.update_one(
-        {"_id": oid},
-        {"$set": {"content": content, "updated_at": datetime.utcnow()}},
-    )
+    updates = {"updated_at": datetime.utcnow()}
+    if content is not None:
+        updates["content"] = content
+    if title is not None:
+        updates["title"] = title.strip() or None
+    if len(updates) <= 1:
+        return False
+    r = await get_db().notes.update_one({"_id": oid}, {"$set": updates})
     return r.modified_count > 0
 
 

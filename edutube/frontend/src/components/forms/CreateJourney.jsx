@@ -3,6 +3,7 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { createJourney, createJourneyWithPlaylist, getAllJourneys } from "../../Api/journeys";
 import { useNavigate } from "react-router-dom";
 import { extractPlaylistId } from "../../Constants";
+import { RainbowButton } from "../../components/ui/rainbow-button";
 
 const CreateJourney = ({ open, setOpen }) => {
   const [title, setTitle] = useState("");
@@ -251,13 +252,14 @@ const CreateJourney = ({ open, setOpen }) => {
               
               {/* Close button */}
               <div className="flex justify-end mt-6">
-                <button
+                <RainbowButton
                   type="button"
+                  variant="outline"
                   onClick={() => setOpen(false)}
-                  className="px-6 py-2 text-sm font-medium text-muted-foreground bg-transparent border border-border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
+                  className="px-6 py-2"
                 >
                   Cancel
-                </button>
+                </RainbowButton>
               </div>
             </div>
           </DialogPanel>

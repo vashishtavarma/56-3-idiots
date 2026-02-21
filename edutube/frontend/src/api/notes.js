@@ -16,12 +16,12 @@ const fetchWithToken = async (url, options = {}) => {
   return await response.json();
 };
 
-// 1. Create a Note
-export const createNote = async (journeyId, chapterId, content) => {
+// 1. Create a Note (title optional; shown as note heading on Notes page)
+export const createNote = async (journeyId, chapterId, content, title = '') => {
   try {
     const response = await fetchWithToken(`${apiurl}/journeys/${journeyId}/chapters/${chapterId}/notes`, {
       method: 'POST',
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, title: title || '' }),
     });
     return response;
   } catch (error) {
@@ -59,12 +59,15 @@ export const getNoteById = async (noteId) => {
   }
 };
 
-// 5. Update a Note
-export const updateNote = async (noteId, content) => {
+// 5. Update a Note (title optional)
+export const updateNote = async (noteId, content, title) => {
   try {
+    const body = {};
+    if (content !== undefined) body.content = content;
+    if (title !== undefined) body.title = title;
     const response = await fetchWithToken(`${apiurl}/notes/${noteId}`, {
       method: 'PUT',
-      body: JSON.stringify({ content }),
+      body: JSON.stringify(body),
     });
     return response;
   } catch (error) {

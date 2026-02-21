@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getNotesByJourney } from '../Api/notes';
-import { useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { getNotesByJourney, getNotesByChapter } from '../Api/notes';
 import { getJourneyById } from '../Api/journeys';
+import { getChaptersByJourneyId } from '../Api/chapters';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -12,30 +13,57 @@ const IconDownload = ({ className }) => (
   </svg>
 );
 
-/** Force node and descendants to use hex colors so html2canvas (no oklch support) can parse */
+/** Force node and all descendants to use hex colors so html2canvas (no oklch support) can parse */
 function forceHexColors(node, bg = '#ffffff', text = '#000000', border = '#e5e7eb') {
-  if (!node || !node.style) return;
-  node.style.backgroundColor = bg;
-  node.style.color = text;
-  if (node.style.borderColor !== undefined) node.style.borderColor = border;
+  if (!node) return;
+  if (node.style) {
+    node.style.backgroundColor = bg;
+    node.style.color = text;
+    node.style.borderColor = border;
+  }
   try {
+    const doc = node.ownerDocument || node;
+    if (doc.body) {
+      doc.body.style.backgroundColor = bg;
+      doc.body.style.color = text;
+    }
+    if (doc.documentElement) {
+      doc.documentElement.style.backgroundColor = bg;
+      doc.documentElement.style.color = text;
+    }
     Array.from(node.children || []).forEach((child) => forceHexColors(child, bg, text, border));
   } catch (_) {}
 }
 
 const Notes = () => {
-  const { journeyId } = useParams(); // Get the journeyId from URL params
+  const { journeyId } = useParams();
+  const [searchParams] = useSearchParams();
+  const chapterId = searchParams.get('chapterId'); // When set, show only this chapter's notes
   const [notes, setNotes] = useState([]);
   const [jData, setJData] = useState({});
+  const [chapterTitle, setChapterTitle] = useState(null);
   const [error, setError] = useState(null);
 
-  // Fetch the notes when the component mounts
   const fetchNotes = async () => {
+    if (!journeyId) return;
+    setError(null);
     try {
-      const fetchedNotes = await getNotesByJourney(journeyId);
       const fetchJourney = await getJourneyById(journeyId);
-      setNotes(fetchedNotes);
-      setJData(fetchJourney);
+      setJData(fetchJourney || {});
+
+      if (chapterId) {
+        // Per-chapter: only this video's notes (others not visible)
+        const chapterNotes = await getNotesByChapter(chapterId);
+        setNotes(Array.isArray(chapterNotes) ? chapterNotes : []);
+        const chapters = await getChaptersByJourneyId(journeyId);
+        const ch = (chapters || []).find((c) => c.id === chapterId);
+        setChapterTitle(ch?.title || null);
+      } else {
+        // Playlist-level: all notes for this playlist (all PDFs)
+        const journeyNotes = await getNotesByJourney(journeyId);
+        setNotes(Array.isArray(journeyNotes) ? journeyNotes : []);
+        setChapterTitle(null);
+      }
     } catch (err) {
       setError('Failed to fetch notes');
       console.error(err);
@@ -43,8 +71,8 @@ const Notes = () => {
   };
 
   useEffect(() => {
-    fetchNotes(); // Fetch notes on component mount
-  }, [journeyId]); // Re-run if journeyId changes
+    fetchNotes();
+  }, [journeyId, chapterId]);
 
   // Function to handle PDF generation and download (html2canvas does not support oklch, so we force hex in clone)
   const downloadPDF = () => {
@@ -53,8 +81,24 @@ const Notes = () => {
 
     html2canvas(input, {
       useCORS: true,
-      onclone: (_doc, clonedEl) => {
-        forceHexColors(clonedEl, '#ffffff', '#000000', '#e5e7eb');
+      onclone: (clonedDoc, clonedEl) => {
+        // html2canvas doesn't support oklch; inject override so computed styles are hex
+        const style = clonedDoc.createElement('style');
+        style.textContent = `
+          *, *::before, *::after {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-color: #e5e7eb !important;
+          }
+          .bg-muted\\/40, .bg-muted\\/60 { background-color: #f3f4f6 !important; }
+          .prose, .prose * { color: #000000 !important; }
+        `;
+        clonedDoc.head.appendChild(style);
+        if (clonedDoc.body) {
+          clonedDoc.body.style.backgroundColor = '#ffffff';
+          clonedDoc.body.style.color = '#000000';
+        }
+        forceHexColors(clonedEl, '#f9fafb', '#000000', '#e5e7eb');
       },
     })
       .then((canvas) => {
@@ -63,7 +107,8 @@ const Notes = () => {
         const imgWidth = 210;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(`${jData.title || 'Notes'}_Notes.pdf`);
+        const base = chapterTitle ? `${jData.title || 'Notes'}_${chapterTitle}` : (jData.title || 'Notes');
+        pdf.save(`${base}_Notes.pdf`);
       })
       .catch((err) => {
         console.error('PDF export failed:', err);
@@ -71,66 +116,120 @@ const Notes = () => {
       });
   };
 
-  // Render the notes or a message if there's an error or no notes
-  return (
-    <div className="min-h-screen bg-background text-foreground p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-card border border-border rounded-lg shadow-lg p-6 text-card-foreground">
-          <h1 className="text-3xl font-bold mb-6">Notes</h1>
+  const descriptionText =
+    chapterId && chapterTitle
+      ? `${chapterTitle} · ${jData?.title || 'Journey'}`
+      : jData?.title
+        ? `All notes & PDFs for "${jData.title}"`
+        : 'Journey notes';
 
-          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
-          {notes.length === 0 && !error ? (
-            <div className='flex justify-center text-xl font-semibold items-center w-full h-[50vh] text-muted-foreground'>
-              No notes available for {jData ? jData.title : 'this journey'}.
-            </div>
-          ) : (
-            <>
-              <button
-                onClick={downloadPDF}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4 py-2 rounded mb-6 flex items-center gap-2 transition-colors"
+  return (
+    <div className="min-h-screen bg-background text-foreground antialiased">
+      <section className="px-4 py-6 md:py-8">
+        <div className="mx-auto max-w-4xl space-y-4">
+          {/* Nav links only – clear row, no mixing with description */}
+          <div className="flex flex-wrap items-center gap-4">
+            {chapterId && (
+              <Link
+                to={`/notes/${journeyId}`}
+                className="inline-flex items-center text-sm font-medium text-primary transition-colors hover:underline"
               >
-                <span>Download PDF</span>
-                <IconDownload className="w-6 h-6 shrink-0" />
-              </button>
-              <div id="notesContent" className="space-y-4">
-                <h2 className="text-2xl font-bold mb-4 text-foreground">
-                  Notes for {jData.title}
-                </h2>
-                <div className="space-y-4">
-                  {notes.map(note => (
-                    <div key={note.id} className="bg-muted/50 p-4 border border-border rounded-lg">
-                      {/* Display HTML content using dangerouslySetInnerHTML */}
-                      <div
-                        className="text-lg font-medium text-foreground prose max-w-none"
-                        dangerouslySetInnerHTML={{ __html: note.content }}
-                        onClick={(e) => {
-                          // Handle clicks on links within the notes content
-                          if (e.target.tagName === 'A') {
-                            e.preventDefault();
-                            const href = e.target.getAttribute('href');
-                            if (href) {
-                              // Check if it's an external link (starts with http:// or https://)
-                              if (href.startsWith('http://') || href.startsWith('https://')) {
-                                window.open(href, '_blank', 'noopener,noreferrer');
-                              } else {
-                                // For relative links, you can handle them differently if needed
-                                window.open(href, '_blank', 'noopener,noreferrer');
-                              }
-                            }
-                          }
-                        }}
-                      />
-                      <p className="text-muted-foreground text-sm mt-3 pt-3 border-t border-border">
-                        Created: {new Date(note.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                View all playlist notes
+              </Link>
+            )}
+            <Link
+              to={journeyId ? `/journey/${journeyId}` : '/'}
+              className="inline-flex items-center text-sm font-medium text-primary transition-colors hover:underline"
+            >
+              ← Back to playlist
+            </Link>
+          </div>
+
+          {/* Description in its own card */}
+          <div className="rounded-xl border border-border bg-muted/30 px-4 py-3 md:px-5 md:py-4">
+            <p className="text-sm text-muted-foreground md:text-base">{descriptionText}</p>
+          </div>
+
+          {/* Main content card */}
+          <div className="rounded-xl border border-border bg-card p-6 shadow-sm md:p-8">
+            <h1 className="text-2xl font-bold text-foreground md:text-3xl">
+              {chapterId ? 'Chapter notes' : 'Playlist notes'}
+            </h1>
+
+            {error && (
+              <div className="mt-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {error}
               </div>
-            </>
-          )}
+            )}
+
+            {notes.length === 0 && !error && (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <p className="text-lg font-medium text-foreground">
+                  No notes yet
+                </p>
+                <p className="mt-1 text-muted-foreground">
+                  {chapterId
+                    ? (chapterTitle ? `No notes for "${chapterTitle}".` : 'No notes for this chapter.')
+                    : `No notes for ${jData?.title ? `"${jData.title}"` : 'this journey'} yet.`}
+                </p>
+                <Link
+                  to={journeyId ? `/journey/${journeyId}` : '/'}
+                  className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Back to playlist
+                </Link>
+              </div>
+            )}
+
+            {notes.length > 0 && !error && (
+              <>
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={downloadPDF}
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-0"
+                  >
+                    <IconDownload className="h-5 w-5 shrink-0" />
+                    Download PDF
+                  </button>
+                </div>
+
+                <div id="notesContent" className="mt-6 space-y-6">
+                  <h2 className="sr-only">Notes content</h2>
+                  <div className="space-y-6">
+                    {notes.map((note) => (
+                      <article
+                        key={note.id}
+                        className="rounded-xl border border-border bg-muted/40 p-6 transition-colors hover:bg-muted/60"
+                      >
+                        {note.title && (
+                          <h3 className="mb-3 text-lg font-semibold text-foreground">
+                            {note.title}
+                          </h3>
+                        )}
+                        <div
+                          className={`prose prose-sm max-w-none text-foreground md:prose-base ${note.title ? 'mt-2' : ''}`}
+                          dangerouslySetInnerHTML={{ __html: note.content || '' }}
+                          onClick={(e) => {
+                            if (e.target.tagName === 'A') {
+                              e.preventDefault();
+                              const href = e.target.getAttribute('href');
+                              if (href) window.open(href, '_blank', 'noopener,noreferrer');
+                            }
+                          }}
+                        />
+                        <p className="mt-5 border-t border-border pt-4 text-sm text-muted-foreground">
+                          Created: {note.created_at ? new Date(note.created_at).toLocaleString() : '—'}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

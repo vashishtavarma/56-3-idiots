@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./Components/Navbar";
-import Footer from "./Components/Footer";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./Pages/Home";
 import Explore from "./Pages/Explore";
@@ -64,7 +63,6 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/land" element={<Landing />} />
       </Routes>
-      {location.pathname === '/land' && <Footer />}
       {isAuthenticated && <Chatbot />}
     </ThemeProvider>
   );

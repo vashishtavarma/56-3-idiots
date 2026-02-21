@@ -77,10 +77,15 @@ export default {
           "0%": { transform: "scale(0)", opacity: "1" },
           "100%": { transform: "scale(2)", opacity: "0" },
         },
+        rainbow: {
+          "0%": { backgroundPosition: "0%" },
+          "100%": { backgroundPosition: "200%" },
+        },
       },
       animation: {
         shine: "shine var(--duration, 14s) ease-in-out infinite",
         rippling: "rippling 600ms ease-out forwards",
+        rainbow: "rainbow var(--speed, 2s) infinite linear",
       },
     }
   },

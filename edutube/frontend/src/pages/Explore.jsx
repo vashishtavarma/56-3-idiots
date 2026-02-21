@@ -14,6 +14,7 @@ import { getUserProfile } from '../Api';
 
 const Explore = () => {
   const [journeys, setJourneys] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
   const [user, setUser] = useState({});
 
@@ -51,6 +52,17 @@ const Explore = () => {
     return (lastSpace > 0 ? cut.substring(0, lastSpace) : cut) + "…";
   };
 
+  // Filter journeys by search keyword (title, description, username)
+  const q = (searchQuery || "").trim().toLowerCase();
+  const filteredJourneys = q
+    ? journeys.filter(
+        (j) =>
+          (j.title || "").toLowerCase().includes(q) ||
+          (j.description || "").toLowerCase().includes(q) ||
+          (j.username || "").toLowerCase().includes(q)
+      )
+    : journeys;
+
   return (
     <section className="min-h-[90vh] bg-background text-foreground antialiased">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8">
@@ -73,8 +85,10 @@ const Explore = () => {
                 <input
                   type="text"
                   id="explore-search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm rounded-lg focus:ring-0 focus:border-primary block w-full pl-10 pr-4 py-2.5"
-                  placeholder="Search journeys"
+                  placeholder="Search by title, description or owner"
                 />
               </div>
             </div>
@@ -94,7 +108,14 @@ const Explore = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {journeys.map((journey) => (
+                  {filteredJourneys.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 sm:px-5 py-12 text-center text-muted-foreground">
+                        {q ? `No journeys match "${searchQuery.trim()}". Try a different search.` : "No public journeys yet."}
+                      </td>
+                    </tr>
+                  ) : (
+                  filteredJourneys.map((journey) => (
                     <tr key={journey.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                       <td className="px-4 sm:px-5 py-3.5 align-middle font-medium text-foreground whitespace-nowrap">
                         {journey.title || "Untitled"}
@@ -131,7 +152,8 @@ const Explore = () => {
                         )}
                       </td>
                     </tr>
-                  ))}
+                  ))
+                  )}
                 </tbody>
               </table>
             )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import JourneyProgressBarChart from "../Components/Dashboard/JourneyProgressBarChart";
+import JourneyPieChart from "../Components/Dashboard/JourneyPieChart";
 import { calculateProgress } from "../Constants";
 import { getUserProfile } from "../Api";
 import { getAllJourneys } from "../Api/journeys";
@@ -40,13 +40,17 @@ const ProfileDashboard = () => {
     fetchJourneys();
   }, []);
 
-  const overallJourneys = journeys.map((j) => ({ name: j.name, progress: j.completed }));
   const totalJourneys = journeys.length;
   const avgProgress =
     totalJourneys > 0
       ? Math.round(journeys.reduce((acc, j) => acc + j.completed, 0) / totalJourneys)
       : 0;
   const completedCount = journeys.filter((j) => j.completed >= 100).length;
+  // Overall progress for pie: completed % vs remaining %
+  const overallPieData = {
+    completed: avgProgress,
+    remaining: Math.max(0, 100 - avgProgress),
+  };
 
   const getInitial = (name) => {
     if (!name) return "?";
@@ -151,9 +155,9 @@ const ProfileDashboard = () => {
           </div>
         </section>
 
-        {/* Journey progress bar chart – tracks user record per journey */}
+        {/* Overall journey progress – pie chart */}
         <section>
-          <JourneyProgressBarChart journeys={overallJourneys} />
+          <JourneyPieChart data={overallPieData} title="Overall Journey Progress" />
         </section>
       </div>
     </div>

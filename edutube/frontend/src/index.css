@@ -51,6 +51,13 @@
     --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 8px 10px -1px hsl(0 0% 0% / 0.17);
     --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.43);
     --tracking-normal: 0.025em;
+    /* Magic UI rainbow button */
+    --color-1: hsl(0, 100%, 63%);
+    --color-2: hsl(270, 100%, 63%);
+    --color-3: hsl(210, 100%, 63%);
+    --color-4: hsl(195, 100%, 63%);
+    --color-5: hsl(90, 100%, 63%);
+    --speed: 2s;
   }
 
   .dark {
@@ -172,6 +179,44 @@ textarea {
   color: var(--foreground);
 }
 
+/* Study-friendly defaults: readable size, line height, alignment for later review */
+.notes-editor-study .ql-editor {
+  font-size: 1.0625rem; /* ~17px – comfortable for long reading */
+  line-height: 1.65;
+  text-align: left;
+  letter-spacing: 0.01em;
+  padding: 1rem 1.25rem;
+}
+.notes-editor-study .ql-editor p,
+.notes-editor-study .ql-editor li {
+  margin-bottom: 0.5em;
+}
+.notes-editor-study .ql-editor p:last-child,
+.notes-editor-study .ql-editor li:last-child {
+  margin-bottom: 0;
+}
+.notes-editor-study .ql-editor h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+.notes-editor-study .ql-editor h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: 0.85em;
+  margin-bottom: 0.4em;
+}
+.notes-editor-study .ql-editor blockquote {
+  border-left: 4px solid var(--border);
+  padding-left: 1rem;
+  margin: 0.75em 0;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+
 .dark .notes-editor .ql-editor {
   color: var(--foreground);
 }
@@ -246,6 +291,54 @@ textarea {
 
 .animate-rippling {
   animation: rippling 600ms ease-out forwards;
+}
+
+/* Magic UI: rainbow button – gradient uses --color-1 through --color-5 */
+@keyframes rainbow {
+  0% { background-position: 0%; }
+  100% { background-position: 200%; }
+}
+
+.animate-rainbow {
+  animation: rainbow var(--speed, 2s) infinite linear;
+}
+
+/* Solid center so text is always visible; rainbow as border/glow */
+.rainbow-btn {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  box-shadow: 0 0 0 2px var(--card), 0 0 12px -2px var(--color-1);
+}
+
+.dark .rainbow-btn {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+}
+
+.rainbow-btn-outline {
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+  border: 2px solid var(--border) !important;
+}
+
+.dark .rainbow-btn-outline {
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.rainbow-btn-glow::before {
+  content: "";
+  position: absolute;
+  bottom: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+  height: 20%;
+  width: 60%;
+  background: linear-gradient(90deg, var(--color-1), var(--color-5), var(--color-3), var(--color-4), var(--color-2));
+  filter: blur(0.75rem);
+  animation: rainbow var(--speed, 2s) infinite linear;
 }
 
 /* Force modal panels to be opaque in light and dark (Headless UI Dialog can be portaled) */
