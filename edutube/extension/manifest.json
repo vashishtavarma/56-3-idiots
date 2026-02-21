@@ -1,19 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "HAL - YouTube Learning",
-  "version": "0.0.1",
-  "description": "Focus mode and learning tools for YouTube: notes, quizzes, less distractions.",
-  "permissions": ["activeTab", "storage"],
-  "host_permissions": ["https://www.youtube.com/*", "http://localhost:8000/*"],
-  "action": {
-    "default_popup": "popup/popup.html"
+  "name": "EduTube",
+  "version": "1.0.0",
+  "description": "EduTube learning journeys - sign in and access your dashboard from the browser side panel.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["https://www.youtube.com/*"],
-      "js": ["content/content.js"],
-      "css": ["content/content.css"],
-      "run_at": "document_idle"
-    }
+  "action": {},
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "permissions": [
+    "sidePanel"
   ],
+  "host_permissions": [
+    "http://localhost:5173/*",
+    "http://localhost:5000/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }

@@ -1,0 +1,22 @@
+[     658ms] Error: No authentication token found
+    at getUserProfile (http://localhost:5173/src/api/index.js:59:11)
+    at http://localhost:5173/src/pages/Explore.jsx:50:5
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:16915:34)
+    at commitPassiveMountOnFiber (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:18156:19)
+    at commitPassiveMountEffects_complete (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:18129:17)
+    at commitPassiveMountEffects_begin (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:18119:15)
+    at commitPassiveMountEffects (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:18109:11)
+    at flushPassiveEffectsImpl (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19490:11)
+    at flushPassiveEffects (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19447:22)
+    at http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19328:17
+[     659ms] Error: No authentication token found
+    at getUserProfile (http://localhost:5173/src/api/index.js:59:11)
+    at http://localhost:5173/src/pages/Explore.jsx:50:5
+    at commitHookEffectListMount (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:16915:34)
+    at invokePassiveEffectMountInDEV (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:18324:19)
+    at invokeEffectsInDev (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19701:19)
+    at commitDoubleInvokeEffectsInDEV (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19686:15)
+    at flushPassiveEffectsImpl (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19503:13)
+    at flushPassiveEffects (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19447:22)
+    at http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:19328:17
+    at workLoop (http://localhost:5173/node_modules/.vite/deps/chunk-NUMECXU6.js?v=b6e8f377:197:42)

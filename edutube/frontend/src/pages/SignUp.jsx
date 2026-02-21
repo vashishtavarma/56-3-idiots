@@ -33,7 +33,7 @@ export default function SignUp() {
       <div className={styles.card}>
         <div className={styles.cardLogo}>
           <span className={styles.cardLogoIcon} aria-hidden>◇</span>
-          <span className={styles.cardLogoText}>Thrive Learn</span>
+          <span className={styles.cardLogoText}>EduTube</span>
         </div>
         <h1 className={styles.title}>Create your account</h1>
         <form onSubmit={handleSubmit} className={styles.form}>

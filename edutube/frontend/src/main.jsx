@@ -1,16 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+import { BrowserRouter } from 'react-router-dom'
 
-// Apply saved theme before first paint
-const saved = localStorage.getItem('theme');
-if (saved === 'dark' || saved === 'light') {
-  document.documentElement.setAttribute('data-theme', saved);
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter>
     <App />
-  </React.StrictMode>
-);
+    </BrowserRouter>
+  </StrictMode>,
+)
