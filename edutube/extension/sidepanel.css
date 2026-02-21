@@ -1,19 +1,35 @@
-/* EduTube Extension — professional side panel UI */
+/**
+ * EduTube Extension — side panel UI.
+ * Uses the same design tokens, font (Outfit), and component styling as the
+ * local EduTube frontend (dark theme) for a consistent experience.
+ */
 
+/* ----- Design tokens: match frontend index.css .dark theme ----- */
 :root {
-  --bg: #0f0f0f;
-  --bg-elevated: #1a1a1a;
-  --bg-hover: #262626;
-  --text: #fafafa;
-  --text-muted: #a3a3a3;
-  --border: #2e2e2e;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --radius: 8px;
-  --radius-sm: 6px;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --background: oklch(0.1822 0 0);
+  --foreground: oklch(0.9288 0.0126 255.5078);
+  --card: oklch(0.2046 0 0);
+  --card-foreground: oklch(0.9288 0.0126 255.5078);
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.2 0 0);
+  --secondary: oklch(0.2603 0 0);
+  --secondary-foreground: oklch(0.9851 0 0);
+  --muted: oklch(0.2393 0 0);
+  --muted-foreground: oklch(0.7122 0 0);
+  --accent: oklch(0.3132 0 0);
+  --accent-foreground: oklch(0.9851 0 0);
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.2809 0 0);
+  --input: oklch(0.2603 0 0);
+  --ring: oklch(0.98 0 0);
+  --radius: 0.5rem;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --tracking-normal: 0.025em;
+  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 1px 2px -1px hsl(0 0% 0% / 0.17);
+  --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 1px 2px -1px hsl(0 0% 0% / 0.17);
+  --shadow-md: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 2px 4px -1px hsl(0 0% 0% / 0.17);
+  --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 8px 10px -1px hsl(0 0% 0% / 0.17);
 }
 
 * {
@@ -22,14 +38,23 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
-  color: var(--text);
-  background: var(--bg);
+  letter-spacing: var(--tracking-normal);
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus: match frontend (no visible outline/ring unless needed for a11y) */
+*:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .app {
@@ -39,7 +64,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Views: only one visible at a time */
+/* ----- Views ----- */
 .view {
   display: flex;
   flex-direction: column;
@@ -51,73 +76,93 @@ html, body {
   display: none;
 }
 
-/* ----- Auth ----- */
+/* ----- Auth (matches Auth.jsx / SignUp: gradient + card + form) ----- */
+#auth-view {
+  background: linear-gradient(to bottom right, #0f172a, #1e293b, #334155);
+  justify-content: center;
+}
+
 .auth-card {
   padding: 24px;
   max-width: 320px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .brand {
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: 700;
   margin-bottom: 4px;
   letter-spacing: -0.02em;
+  color: var(--foreground);
 }
 
 .brand-tagline {
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   font-size: 13px;
   margin-bottom: 24px;
 }
 
+.form-panel {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
 .form-panel h2 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 16px;
+  color: var(--card-foreground);
 }
 
 .form-panel label {
   display: block;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   margin-bottom: 6px;
 }
 
 .form-panel input,
 .form-panel textarea {
   width: 100%;
-  padding: 10px 12px;
+  height: 36px;
+  padding: 8px 12px;
   margin-bottom: 14px;
   font-size: 14px;
-  color: var(--text);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background: var(--muted);
+  border: 2px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-panel textarea {
+  height: auto;
+  min-height: 60px;
+  resize: vertical;
 }
 
 .form-panel input::placeholder,
 .form-panel textarea::placeholder {
-  color: var(--text-muted);
-  opacity: 0.8;
+  color: var(--muted-foreground);
 }
 
 .form-panel input:focus,
 .form-panel textarea:focus {
-  border-color: var(--primary);
-}
-
-textarea {
-  resize: vertical;
-  min-height: 60px;
+  border-color: var(--ring);
+  box-shadow: none;
 }
 
 .error-msg {
   font-size: 12px;
-  color: var(--danger);
+  color: var(--destructive);
   margin-bottom: 10px;
   min-height: 18px;
 }
@@ -125,7 +170,7 @@ textarea {
 .auth-switch {
   margin-top: 16px;
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
 }
 
 .auth-switch a {
@@ -138,7 +183,7 @@ textarea {
   text-decoration: underline;
 }
 
-/* ----- Buttons ----- */
+/* ----- Buttons (match frontend primary = white bg in dark, ghost = transparent) ----- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -147,35 +192,41 @@ textarea {
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 500;
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-normal);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: calc(var(--radius) - 2px);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .btn-primary {
   background: var(--primary);
-  color: white;
+  color: var(--primary-foreground);
+}
+
+/* Full-width only for form submit (e.g. Sign in); section actions stay compact */
+.form-panel .btn-primary {
   width: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
+  filter: brightness(0.95);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
 }
 
-.btn-ghost:hover {
-  background: var(--bg-hover);
-  color: var(--text);
+.btn-ghost:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--accent-foreground);
 }
 
 .btn-sm {
@@ -193,16 +244,16 @@ textarea {
 
 .btn-danger {
   background: transparent;
-  color: var(--danger);
+  color: var(--destructive);
   padding: 6px 10px;
   font-size: 12px;
 }
 
-.btn-danger:hover {
-  background: rgba(239, 68, 68, 0.15);
+.btn-danger:hover:not(:disabled) {
+  background: oklch(0.6 0.22 25 / 0.15);
 }
 
-/* ----- Header & section ----- */
+/* ----- Header & section (match Navbar / layout borders) ----- */
 .header {
   display: flex;
   align-items: center;
@@ -210,6 +261,8 @@ textarea {
   padding: 16px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  background: var(--card);
+  color: var(--card-foreground);
 }
 
 .header-actions {
@@ -226,6 +279,7 @@ textarea {
 .greeting {
   font-size: 15px;
   font-weight: 600;
+  color: var(--foreground);
 }
 
 .journey-title {
@@ -236,6 +290,7 @@ textarea {
   white-space: nowrap;
   flex: 1;
   margin-left: 8px;
+  color: var(--foreground);
 }
 
 .section-head {
@@ -249,16 +304,16 @@ textarea {
 .section-head h2 {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
 }
 
 .section-label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
 }
 
-/* ----- Scroll list (journeys / videos) ----- */
+/* ----- Scroll list & cards (match Home journey cards: rounded-xl, border, bg-card) ----- */
 .scroll-list {
   flex: 1;
   overflow-y: auto;
@@ -273,7 +328,7 @@ textarea {
 }
 
 .scroll-list::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--background);
 }
 
 .scroll-list::-webkit-scrollbar-thumb {
@@ -287,14 +342,16 @@ textarea {
   justify-content: space-between;
   gap: 10px;
   padding: 12px 14px;
-  background: var(--bg-elevated);
+  background: var(--card);
+  color: var(--card-foreground);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
   transition: background 0.15s, border-color 0.15s;
 }
 
 .card:hover {
-  background: var(--bg-hover);
+  background: var(--accent);
   border-color: var(--border);
 }
 
@@ -310,6 +367,7 @@ textarea {
   white-space: nowrap;
   flex: 1;
   min-width: 0;
+  color: var(--card-foreground);
 }
 
 .card-actions {
@@ -322,7 +380,7 @@ textarea {
 .empty-state {
   padding: 24px 16px;
   text-align: center;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   font-size: 13px;
 }
 
@@ -330,15 +388,16 @@ textarea {
   display: none;
 }
 
-/* ----- Modals ----- */
+/* ----- Modals (match frontend dialog: bg-card, border, rounded-xl, shadow-xl) ----- */
 .modal {
   width: 90%;
   max-width: 340px;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-elevated);
-  box-shadow: var(--shadow);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: var(--shadow-xl);
 }
 
 .modal::backdrop {
@@ -346,9 +405,10 @@ textarea {
 }
 
 .modal h3 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 16px;
+  color: var(--card-foreground);
 }
 
 .modal form {
@@ -359,26 +419,34 @@ textarea {
   display: block;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--muted-foreground);
   margin-bottom: 6px;
 }
 
 .modal input,
 .modal textarea {
   width: 100%;
-  padding: 10px 12px;
+  height: 36px;
+  padding: 8px 12px;
   margin-bottom: 14px;
   font-size: 14px;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background: var(--muted);
+  border: 2px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
   outline: none;
+}
+
+.modal textarea {
+  height: auto;
+  min-height: 60px;
+  resize: vertical;
 }
 
 .modal input:focus,
 .modal textarea:focus {
-  border-color: var(--primary);
+  border-color: var(--ring);
 }
 
 .modal-actions {
