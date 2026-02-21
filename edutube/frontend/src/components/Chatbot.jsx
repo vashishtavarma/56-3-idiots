@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, X, Minimize2, RotateCcw, Bot } from 'lucide-react';
+import { MessageCircle, Send, X, Minimize2, RotateCcw, Bot, BookOpen } from 'lucide-react';
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  // Knowledge mode: changes config only; still uses Nova Lite
+  const [useKnowledge, setUseKnowledge] = useState(false);
   const getInitialMessages = () => [
     {
       id: 1,
@@ -50,7 +52,8 @@ const Chatbot = () => {
         },
         body: JSON.stringify({
           message: messageToSend,
-          context: "EduTube learning platform"
+          context: "EduTube learning platform",
+          use_knowledge: useKnowledge
         })
       });
 
@@ -60,7 +63,8 @@ const Chatbot = () => {
       console.log('Response data:', data);
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to get response from AI');
+        const msg = data.detail || data.error || 'Failed to get response from AI';
+        throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
       }
       
       const botMessage = {
@@ -136,9 +140,22 @@ const Chatbot = () => {
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <div>
                 <h3 className="font-semibold">AI Assistant</h3>
+                {useKnowledge && (
+                  <span className="text-xs opacity-90 flex items-center gap-0.5">
+                    <BookOpen size={12} /> Knowledge
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex space-x-1">
+              <button
+                onClick={() => setUseKnowledge((k) => !k)}
+                className={`hover:bg-primary/80 p-1 rounded focus:outline-none ${useKnowledge ? 'bg-primary-foreground/20' : ''}`}
+                aria-label="Toggle knowledge mode"
+                title={useKnowledge ? 'Knowledge mode ON – answers prefer course/playlist context' : 'Knowledge mode OFF – general assistant'}
+              >
+                <BookOpen size={16} />
+              </button>
               <button
                 onClick={resetChat}
                 className="hover:bg-primary/80 p-1 rounded focus:outline-none"

@@ -1,7 +1,7 @@
 # app/routers/journeys.py
 """Journey CRUD, fork, playlist import, and public list."""
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 
 from app.auth import CurrentUser
 from app.schemas import (
@@ -21,6 +21,7 @@ from app.services.journey_service import (
 )
 from app.services.chapter_service import create_chapter
 from app.services.playlist_service import get_playlist_details, get_playlist_videos
+from app.services.knowledge_pipeline import schedule_playlist_transcripts
 
 router = APIRouter(tags=["journeys"])
 
@@ -47,7 +48,9 @@ async def create_journey_route(body: JourneyCreate, user: CurrentUser):
 
 
 @router.post("/journeys/playlist", response_model=JourneyCreateResponse)
-async def create_journey_from_playlist(body: PlaylistCreate, user: CurrentUser):
+async def create_journey_from_playlist(
+    body: PlaylistCreate, user: CurrentUser, background_tasks: BackgroundTasks
+):
     playlist_id = body.playlistId
     if not playlist_id:
         raise HTTPException(status_code=400, detail="Playlist ID is required")
@@ -60,15 +63,20 @@ async def create_journey_from_playlist(body: PlaylistCreate, user: CurrentUser):
         user_id=user_id,
     )
     videos = await get_playlist_videos(playlist_id)
+    video_links = []
     for v in videos:
+        video_link = v.get("videoLink", "no video")
+        video_links.append(video_link)
         await create_chapter(
             journey_id=jid,
             title=v.get("title", ""),
             description=v.get("description", ""),
-            video_link=v.get("videoLink", "no video"),
+            video_link=video_link,
             external_link="",
             chapter_no=v.get("chapterNo", 1),
         )
+    # Single background task processes all playlist transcripts sequentially (avoids thread/rate-limit issues)
+    background_tasks.add_task(schedule_playlist_transcripts, video_links, jid)
     return JourneyCreateResponse(id=jid)
 
 

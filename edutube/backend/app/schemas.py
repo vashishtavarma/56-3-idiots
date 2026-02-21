@@ -133,6 +133,7 @@ class NoteCreateResponse(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     context: str | None = None
+    use_knowledge: bool = False  # When True, prefer knowledge-base context (config only; still uses Nova Lite)
 
 
 class ChatResponse(BaseModel):
@@ -144,7 +145,7 @@ class ChatResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     service: str
-    geminiConfigured: bool = Field(..., alias="geminiConfigured")
+    novaConfigured: bool = Field(..., alias="novaConfigured")
 
     model_config = {"populate_by_name": True, "serialize_by_alias": True}
 

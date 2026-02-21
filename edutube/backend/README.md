@@ -26,7 +26,8 @@ Backend for **EduTube**: learning journeys, chapters, notes, and an AI chatbot. 
 
    - `JWT_SECRET` — secret for JWT auth
    - `MONGODB_URL` — e.g. `mongodb://localhost:27017` or your Atlas URI
-   - Optionally `GEMINI_API_KEY`, `YT_KEY` for chatbot and YouTube playlist import
+   - Optionally `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (and enable Nova Lite in Bedrock), `YT_KEY` for chatbot and YouTube playlist import
+   - Optionally `S3_BUCKET` (and `S3_TRANSCRIPT_PREFIX`) for the knowledge-base pipeline (transcripts uploaded to S3 for later sync)
 
 3. **Run the server**
 
@@ -47,3 +48,13 @@ Backend for **EduTube**: learning journeys, chapters, notes, and an AI chatbot. 
 - **Chatbot:** `POST /chatbot/chat`, `GET /chatbot/health`
 
 Point the frontend at this server (e.g. `http://localhost:5000/api/v1`).
+
+## Knowledge base pipeline
+
+When a user creates a journey from a playlist or adds a chapter with a YouTube video link, the backend runs a **background task** (non-blocking) that:
+
+1. Extracts the YouTube video ID from the link
+2. Fetches the transcript via `youtube-transcript-api`
+3. Uploads the transcript as a `.txt` file to S3 under `{S3_TRANSCRIPT_PREFIX}/{journey_id}/{video_id}[_{chapter_id}].txt`
+
+Playlist and chapter creation responses return immediately; transcript extraction and S3 upload happen in parallel. Configure `S3_BUCKET` (and optionally `S3_TRANSCRIPT_PREFIX`, `S3_REGION`) to enable uploads; if unset, the pipeline skips S3 and only logs. You can sync these files into your RAG/knowledge base later.

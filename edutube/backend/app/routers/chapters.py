@@ -1,7 +1,7 @@
 # app/routers/chapters.py
 """Chapter CRUD under journeys."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 from app.auth import CurrentUser
 from app.schemas import ChapterCreate, ChapterUpdate, ChapterCompleteUpdate, ChapterCreateResponse
@@ -13,6 +13,7 @@ from app.services.chapter_service import (
     update_chapter_complete,
     delete_chapter,
 )
+from app.services.knowledge_pipeline import schedule_transcript_processing
 
 router = APIRouter(prefix="/journeys", tags=["chapters"])
 
@@ -22,6 +23,7 @@ async def create_chapter_route(
     journey_id: str,
     body: ChapterCreate,
     user: CurrentUser,
+    background_tasks: BackgroundTasks,
 ):
     cid = await create_chapter(
         journey_id=journey_id,
@@ -30,6 +32,13 @@ async def create_chapter_route(
         video_link=body.video_link,
         external_link=body.external_link or "",
         chapter_no=body.chapter_no,
+    )
+    # Knowledge base: extract transcript and upload to S3 in background (non-blocking)
+    background_tasks.add_task(
+        schedule_transcript_processing,
+        body.video_link,
+        journey_id,
+        chapter_id=cid,
     )
     return ChapterCreateResponse(id=cid)
 
