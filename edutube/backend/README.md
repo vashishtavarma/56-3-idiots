@@ -15,8 +15,14 @@ Backend for **EduTube**: learning journeys, chapters, notes, and an AI chatbot. 
    # From edutube repo root
    cd backend
    python -m venv .venv
-   # Windows: .venv\Scripts\activate
-   # Unix: source .venv/bin/activate
+
+   # Activate the venv first (required — otherwise pip/uvicorn use system Python)
+   # Git Bash / Linux / macOS:
+   source .venv/Scripts/activate   # Windows (Git Bash)
+   # source .venv/bin/activate      # Linux/macOS
+   # PowerShell:  .venv\Scripts\Activate.ps1
+   # CMD:         .venv\Scripts\activate.bat
+
    pip install -r requirements.txt
    ```
 
@@ -31,8 +37,16 @@ Backend for **EduTube**: learning journeys, chapters, notes, and an AI chatbot. 
 
 3. **Run the server**
 
+   With the venv activated:
+
    ```bash
    uvicorn main:app --host 0.0.0.0 --port 5000
+   ```
+
+   If `uvicorn` is not found, use the module form:
+
+   ```bash
+   python -m uvicorn main:app --host 0.0.0.0 --port 5000
    ```
 
    Or use the port from your `.env` (e.g. `PORT=5000`).

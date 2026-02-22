@@ -18,7 +18,8 @@ class Settings(BaseSettings):
 
     # MongoDB
     mongodb_url: str = "mongodb://localhost:27017"
-    mongodb_db_name: str = "edutube"
+    # Must match case of existing DB; MongoDB rejects e.g. "edutube" if "EduTube" exists
+    mongodb_db_name: str = "EduTube"
 
     # Optional: YouTube (YT_KEY)
     yt_key: str = ""
