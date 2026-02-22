@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import JourneyPieChart from "../Components/Dashboard/JourneyPieChart";
+import JourneyPieChart from "../components/Dashboard/JourneyPieChart";
 import { calculateProgress } from "../Constants";
 import { getUserProfile } from "../Api";
 import { getAllJourneys } from "../Api/journeys";

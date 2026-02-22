@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { NavLink, Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import Navbar from "./Components/Navbar";
+import Navbar from "./components/Navbar";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./Pages/Home";
-import Explore from "./Pages/Explore";
-import JourneyPage from "./Pages/JourneyPage";
-import ProfileDashboard from "./Pages/ProfileDashboard";
-import VideoPlayerPage from "./Pages/VideoPlayerPage";
+import Home from "./pages/Home";
+import Explore from "./pages/Explore";
+import JourneyPage from "./pages/JourneyPage";
+import ProfileDashboard from "./pages/ProfileDashboard";
+import VideoPlayerPage from "./pages/VideoPlayerPage";
 import Cookies from "js-cookie";
-import Auth from "./Pages/Auth";
-import SignUp from "./Pages/SignUp";
-import Landing from "./Pages/Landing";
-import Notes from "./Pages/Notes";
-import Chatbot from "./Components/Chatbot";
+import Auth from "./pages/Auth";
+import SignUp from "./pages/SignUp";
+import Landing from "./pages/Landing";
+import Notes from "./pages/Notes";
+import Chatbot from "./components/Chatbot";
 
 function getPayload(jwt) {
   return JSON.parse(atob(jwt.split(".")[1]));

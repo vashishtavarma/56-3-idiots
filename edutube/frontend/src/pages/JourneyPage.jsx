@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { calculateProgress } from "../Constants";
-import CreateChapter from "../Components/forms/CreateChapter";
-import AddNotes from "../Components/forms/AddNotes";
-import EditChapter from "../Components/forms/EditChapter";
-import VideoPlayer from "../Components/VideoPlayer";
+import CreateChapter from "../components/forms/CreateChapter";
+import AddNotes from "../components/forms/AddNotes";
+import EditChapter from "../components/forms/EditChapter";
+import VideoPlayer from "../components/VideoPlayer";
 import { getJourneyById } from "../Api/journeys";
 import {
   deleteChapter,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import YouTubeApp from "../Components/YoutubeApp.jsx";
-import AddNotes from "../Components/forms/AddNotes";
+import YouTubeApp from "../components/YoutubeApp.jsx";
+import AddNotes from "../components/forms/AddNotes";
 import { useParams } from "react-router-dom";
 import { getChaptersById } from "../Api/chapters.js";
 import { extractVideoId } from "../Constants/index.js";
