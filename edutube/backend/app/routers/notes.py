@@ -35,7 +35,7 @@ async def create_note_route(
             status_code=404,
             detail="Chapter not found or does not belong to the specified journey",
         )
-    note_id = await create_note(chapter_id, journey_id, body.content)
+    note_id = await create_note(chapter_id, journey_id, body.content, body.title)
     return NoteCreateResponse(noteId=note_id)
 
 
@@ -68,7 +68,7 @@ async def update_note_route(note_id: str, body: NoteUpdate, user: CurrentUser):
     existing = await get_note_by_id(note_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Note not found")
-    updated = await update_note(note_id, body.content)
+    updated = await update_note(note_id, body.content, body.title)
     if not updated:
         raise HTTPException(status_code=400, detail="Failed to update note")
     return {"message": "Note updated successfully"}

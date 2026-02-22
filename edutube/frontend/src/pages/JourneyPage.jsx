@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { calculateProgress, extractVideoId, journey, textss } from "../Constants";
+import { calculateProgress } from "../Constants";
 import CreateChapter from "../Components/forms/CreateChapter";
 import AddNotes from "../Components/forms/AddNotes";
 import EditChapter from "../Components/forms/EditChapter";
@@ -11,6 +11,8 @@ import {
   getChaptersByJourneyId,
   updateChapterComplete,
 } from "../Api/chapters";
+import { RainbowButton } from "../components/ui/rainbow-button";
+import { ConfirmDialog } from "../components/ui/confirm-dialog";
 
 const JourneyPage = () => {
   const [toggleDropDown, setToggleDD] = useState("hidden");
@@ -28,24 +30,27 @@ const JourneyPage = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [jData, setJData] = useState("");
   const [progress, setProgress] = useState(0);
+  const [deleteChapterConfirmOpen, setDeleteChapterConfirmOpen] = useState(false);
+  const [chapterIdToDelete, setChapterIdToDelete] = useState(null);
 
-  
+  const openDeleteChapterConfirm = (chapterId) => {
+    setChapterIdToDelete(chapterId);
+    setDeleteChapterConfirmOpen(true);
+  };
 
-  const deleteOneChapter = async (chapterId) => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this chapter?"
-    );
+  const closeDeleteChapterConfirm = () => {
+    setDeleteChapterConfirmOpen(false);
+    setChapterIdToDelete(null);
+  };
 
-    if (isConfirmed) {
-      try {
-        await deleteChapter(chapterId);
-        console.log("chapter deleted successfully.");
-        fetchData();
-      } catch (error) {
-        console.error("Error deleting journey:", error);
-      }
-    } else {
-      console.log("Deletion canceled.");
+  const deleteOneChapter = async () => {
+    if (!chapterIdToDelete) return;
+    try {
+      await deleteChapter(chapterIdToDelete);
+      fetchData();
+      closeDeleteChapterConfirm();
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
     }
   };
 
@@ -99,198 +104,190 @@ const JourneyPage = () => {
   
 
   return (
-    <div>
-      {/* Banner  */}
-      <section className="bg-background text-foreground px-4 py-3 antialiased md:py-8">
-        <div className="mx-auto grid max-w-screen-xl rounded-lg bg-card border border-border p-4 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16 shadow-lg">
-          <div className="lg:col-span-10 lg:mt-0">
-            <div className="flex flex-col gap-4">
-              <div className="font-bold text-4xl">{jData.title}</div>
-              <div className="font-medium text-xl text-muted-foreground">
-                {jData.description}
-              </div>
-              <div className="font-semibold text-md text-primary-foreground bg-primary rounded-md w-fit px-3 py-1">
-                {jData.is_public ? "public" : "private"}
-              </div>
-
-              <div className="my-6 w-full bg-muted rounded-full h-4">
-                <div className="bg-primary h-4 rounded-full transition-all duration-300" style={{width:`${progress}%`}}></div>
-                <div className="font-semibold text-lg my-2">
+    <div className="min-h-screen bg-background text-foreground antialiased">
+      {/* Playlist header */}
+      <section className="px-4 py-6 md:py-8">
+        <div className="mx-auto max-w-screen-xl rounded-xl border border-border bg-card p-6 shadow-sm md:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl font-bold text-foreground md:text-3xl lg:text-4xl">
+                {jData.title || "—"}
+              </h1>
+              <p className="mt-2 text-muted-foreground md:text-lg">
+                {jData.description || "—"}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+                    jData.is_public
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {jData.is_public ? "Public" : "Private"}
+                </span>
+                <span className="text-sm font-medium text-muted-foreground">
                   Progress: {progress}%
+                </span>
+              </div>
+              <div className="mt-4 w-full max-w-md">
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all duration-500"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="my-5 me-auto place-content-end place-self-start place-items-center lg:col-span-1">
-            <Link
-              to={`/notes/${jData.id}`}
-              className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 px-5 py-3 text-center text-base font-medium text-primary-foreground focus:ring-0 transition-colors"
-            >
-              Notes
-            </Link>
+            <div className="flex-shrink-0">
+              <Link
+                to={`/notes/${jData.id}`}
+                className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-3 text-base font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-0"
+              >
+                Notes
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className="my-4 mx-auto max-w-screen-xl rounded-lg bg-card border border-border shadow-lg p-4 md:p-8 flex flex-col">
-          <h1 className="text-4xl font-bold my-4">Chapters</h1>
+        <div className="mx-auto mt-8 max-w-screen-xl rounded-xl border border-border bg-card p-4 shadow-sm md:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-xl font-bold text-foreground md:text-2xl">
+              Chapters
+            </h2>
+            <button
+              onClick={() => setOpen(true)}
+              type="button"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-0"
+            >
+              <span className="text-lg leading-none">+</span>
+              Add New Chapter
+            </button>
+          </div>
+          <CreateChapter open={open} setOpen={setOpen} journeyId={jId} />
+          <EditChapter
+            openEdit={openEdit}
+            setOpenEdit={setOpenEdit}
+            chapterId={chapterId}
+            chDetails={chDetails}
+          />
 
-          <div className="bg-card border border-border relative shadow-md sm:rounded-lg overflow-hidden">
-            <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
-              <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                <button
-                  onClick={() => setOpen(!open)}
-                  type="button"
-                  id="createProductModalButton"
-                  data-modal-target="createProductModal"
-                  data-modal-toggle="createProductModal"
-                  className="flex items-center justify-center text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-0 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none"
-                >
-                  <span className="font-bold text-2xl pb-1 mx-2"> +</span> Add
-                  New Chapter
-                </button>
-                <CreateChapter open={open} setOpen={setOpen} journeyId={jId} />
-                <EditChapter
-                  openEdit={openEdit}
-                  setOpenEdit={setOpenEdit}
-                  chapterId={chapterId}
-                  chDetails={chDetails}
-                />
-              </div>
-              {textss[0]}
-            </div>
+          <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+            <table className="w-full text-sm text-left text-foreground">
+              <thead className="bg-muted/80 text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th scope="col" className="px-4 py-3.5 font-semibold">
+                    Status
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 font-semibold">
+                    #
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 font-semibold">
+                    Chapter Title
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 font-semibold text-right">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-foreground">
-                <thead className="text-xs uppercase bg-muted text-muted-foreground">
+              <tbody>
+                {!chapters?.length && (
                   <tr>
-                    <th scope="col" className="px-4 py-4">
-                      Status
-                    </th>
-                    <th scope="col" className="px-4 py-4">
-                      Chapter Id
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Chapter Title
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Actions
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {chapters &&
-                    chapters?.map((chapter, index) => (
-                      <tr
-                        key={chapter.id}
-                        className="border-b border-border"
+                    <td colSpan={4} className="px-4 py-12 text-center text-muted-foreground">
+                      <p className="font-medium">No chapters yet</p>
+                      <p className="mt-1 text-sm">Add your first chapter to get started.</p>
+                      <button
+                        type="button"
+                        onClick={() => setOpen(true)}
+                        className="mt-3 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90"
                       >
-                        <td className="px-4 py-3 text-md font-semibold">
+                        + Add New Chapter
+                      </button>
+                    </td>
+                  </tr>
+                )}
+                {chapters &&
+                  chapters.map((chapter, index) => (
+                    <tr
+                      key={chapter.id}
+                      className="border-b border-border transition-colors hover:bg-muted/30"
+                    >
+                      <td className="px-4 py-3.5 align-middle">
+                        <label className="flex cursor-pointer items-center gap-2">
                           <input
                             type="checkbox"
-                            checked={chapter.is_completed}
-                            onChange={() => {
-                              updateCheckBox(chapter.is_completed, chapter.id);
-                            }}
-                            className="w-4 h-4 border border-input rounded bg-background focus:outline-none focus:ring-0"
+                            checked={!!chapter.is_completed}
+                            onChange={() =>
+                              updateCheckBox(chapter.is_completed, chapter.id)
+                            }
+                            className="h-4 w-4 cursor-pointer rounded border-border bg-background text-primary focus:outline-none focus:ring-0 focus:ring-offset-0"
                           />
-                        </td>
-                        <th
-                          scope="row"
-                          className="px-4 py-3 font-medium whitespace-nowrap"
+                          <span className="sr-only">Mark as {chapter.is_completed ? "incomplete" : "complete"}</span>
+                        </label>
+                      </td>
+                      <th
+                        scope="row"
+                        className="px-4 py-3.5 font-medium text-muted-foreground whitespace-nowrap"
+                      >
+                        {index + 1}
+                      </th>
+                      <td className="px-4 py-3.5">
+                        <Link
+                          to={`/player/${chapter.id}`}
+                          className="font-medium text-primary transition-colors hover:underline"
                         >
-                          {index + 1}
-                        </th>
-                        <td className="px-4 py-3 text-md font-semibold cursor-pointer hover:underline">
+                          {chapter.title}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <div className="flex flex-wrap items-center justify-end gap-2">
                           <Link
-                            to={`/player/${chapter.id}`}
-                          >
-                            {chapter.title}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Link
-                            to={`/notes/${jId}`}
-                            className="text-yellow-500 rounded hover:bg-muted p-2 text-md font-semibold border border-border"
+                            to={`/notes/${jId}?chapterId=${chapter.id}`}
+                            className="inline-flex items-center rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
                           >
                             Notes
                           </Link>
-                        </td>
-
-                        <td className="px-4 py-3 max-w-[12rem] truncate">
                           <button
-                            className="text-green-500 rounded hover:bg-muted p-2 text-md font-semibold border border-border"
+                            type="button"
                             onClick={() => {
-                              console.log(chapter.id);
                               setChDetails(chapter);
                               setChapterId(chapter.id);
-                              console.log(chDetails, "/n", chapterId);
-                              setOpenEdit(!openEdit);
+                              setOpenEdit(true);
                             }}
+                            className="inline-flex items-center rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
                           >
                             Edit
                           </button>
-                        </td>
-                        <td className="px-4 py-3 max-w-[12rem] truncate">
-                          <button
-                            className="text-destructive rounded hover:bg-destructive/20 p-2 text-md font-semibold border border-border"
-                            onClick={() => deleteOneChapter(chapter.id)}
+                          <RainbowButton
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openDeleteChapterConfirm(chapter.id)}
+                            className="text-destructive"
                           >
                             Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-
-                  {/* <tr className="border-b border-border">
-                    <td className="px-4 py-3 text-md font-semibold">
-                      <input type="checkbox" className="w-4 h-4 border border-input rounded bg-background focus:outline-none focus:ring-0" />
-                    </td>
-                    <th
-                      scope="row"
-                      className="px-4 py-3 font-medium whitespace-nowrap"
-                    >
-                      1
-                    </th>
-                    <td className="px-4 py-3 text-md font-semibold cursor-pointer hover:underline"  >
-                     <Link to={'/player/1'} >Introduction</Link> 
-                    </td>
-                    <td className="px-4 py-3">
-                      <button 
-                      className="text-yellow-500 rounded hover:bg-muted p-2 text-md font-semibold border border-border"
-                      onClick={()=>setOpenNotes(!openNotes)}
-                      >
-                        Add Notes
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 max-w-[12rem] truncate">
-                      <button 
-                      className="text-green-500 rounded hover:bg-muted p-2 text-md font-semibold border border-border"
-                      onClick={()=>setOpenEdit(!openEdit)}
-                      
-                      >
-                        Edit
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 max-w-[12rem] truncate">
-                      <button className="text-destructive rounded hover:bg-destructive/20 p-2 text-md font-semibold border border-border">
-                        Delete
-                      </button>
-                    </td>
-                  </tr> */}
+                          </RainbowButton>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-          </div>
         </div>
       </section>
+
+      <ConfirmDialog
+        open={deleteChapterConfirmOpen}
+        onClose={closeDeleteChapterConfirm}
+        title="Delete chapter?"
+        message="Are you sure you want to delete this chapter? This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={deleteOneChapter}
+        variant="danger"
+      />
     </div>
   );
 };

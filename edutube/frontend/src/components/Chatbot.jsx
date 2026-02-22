@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, X, Minimize2, RotateCcw, Bot, BookOpen } from 'lucide-react';
+import { MessageCircle, Send, X, RotateCcw, BookOpen } from 'lucide-react';
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -133,13 +133,17 @@ const Chatbot = () => {
           className="fixed bottom-6 right-6 z-50 w-96 h-[32rem] bg-card rounded-lg shadow-2xl border border-border flex flex-col overflow-hidden text-card-foreground"
           style={{ backgroundColor: 'var(--card)' }}
         >
-          {/* Chat Header */}
+          {/* Chat Header – EduChat with circular logo */}
           <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Bot size={20} className="text-green-400" />
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center flex-shrink-0 border border-primary-foreground/30"
+                aria-hidden
+              >
+                <span className="text-primary-foreground font-bold text-sm">EC</span>
+              </div>
               <div>
-                <h3 className="font-semibold">AI Assistant</h3>
+                <h3 className="font-semibold">EduChat</h3>
                 {useKnowledge && (
                   <span className="text-xs opacity-90 flex items-center gap-0.5">
                     <BookOpen size={12} /> Knowledge
@@ -147,18 +151,18 @@ const Chatbot = () => {
                 )}
               </div>
             </div>
-            <div className="flex space-x-1">
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => setUseKnowledge((k) => !k)}
-                className={`hover:bg-primary/80 p-1 rounded focus:outline-none ${useKnowledge ? 'bg-primary-foreground/20' : ''}`}
+                className={`hover:bg-primary-foreground/10 p-1.5 rounded focus:outline-none ${useKnowledge ? 'bg-primary-foreground/20' : ''}`}
                 aria-label="Toggle knowledge mode"
-                title={useKnowledge ? 'Knowledge mode ON – answers prefer course/playlist context' : 'Knowledge mode OFF – general assistant'}
+                title={useKnowledge ? 'Knowledge mode ON' : 'Knowledge mode OFF'}
               >
                 <BookOpen size={16} />
               </button>
               <button
                 onClick={resetChat}
-                className="hover:bg-primary/80 p-1 rounded focus:outline-none"
+                className="hover:bg-primary-foreground/10 p-1.5 rounded focus:outline-none"
                 aria-label="Reset chat"
                 title="Start fresh conversation"
               >
@@ -166,14 +170,7 @@ const Chatbot = () => {
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="hover:bg-primary/80 p-1 rounded focus:outline-none"
-                aria-label="Minimize chat"
-              >
-                <Minimize2 size={16} />
-              </button>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="hover:bg-primary/80 p-1 rounded focus:outline-none"
+                className="hover:bg-primary-foreground/10 p-1.5 rounded focus:outline-none"
                 aria-label="Close chat"
               >
                 <X size={16} />
@@ -235,7 +232,7 @@ const Chatbot = () => {
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 resize-none border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-0 bg-background text-foreground placeholder:text-muted-foreground"
+                className="flex-1 resize-none border-2 border-gray-600 dark:border-gray-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-0 bg-background text-foreground placeholder:text-muted-foreground"
                 rows="1"
                 disabled={isLoading}
               />

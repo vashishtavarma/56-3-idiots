@@ -50,20 +50,31 @@ const VideoPlayerPage = () => {
   };
 
   return (
-    <div className="gap-2 p-4 w-full border-t-2 border-border bg-card text-card-foreground">
-       <h1 className="text-2xl font-bold mt-2 text-foreground">{chapter.title}</h1>
-        <h1 className="text-md font-semibold my-4 text-muted-foreground">
-          {truncateText(chapter.description)}
-        </h1>
-      <div className="flex flex-col lg:flex-row ">
-      <div className="w-full md:w-3/4">
-        {/* YouTubeApp receives the extracted videoId */}
-        <YouTubeApp videoId={videoId} />
-      </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-[1600px] px-4 py-6 md:px-6 md:py-8">
+        {/* Header: title and description with clear spacing */}
+        <header className="mb-8">
+          <h1 className="text-xl font-bold text-foreground md:text-2xl lg:text-3xl">
+            {chapter.title}
+          </h1>
+          <p className="mt-3 text-base text-muted-foreground md:text-lg">
+            {truncateText(chapter.description)}
+          </p>
+        </header>
 
-      <div className="w-full md:w-1/2 mt-4 md:mt-0">
-        <AddNotes journeyId={chapter.journey_id} chapterId={chapter.id} />
-      </div>
+        {/* 60% video | 40% notes with gap – no clubbing */}
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
+          <div className="min-w-0 flex-[6] lg:min-w-[60%]">
+            <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+              <YouTubeApp videoId={videoId} />
+            </div>
+          </div>
+          <aside className="min-w-0 flex-[4] lg:min-w-[40%]">
+            <div className="rounded-xl border border-border bg-card p-5 shadow-sm md:p-6">
+              <AddNotes journeyId={chapter.journey_id} chapterId={chapter.id} variant="sidebar" />
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );

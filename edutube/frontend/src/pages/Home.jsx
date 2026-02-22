@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import CreateJourney from "../Components/forms/CreateJourney";
 import { deleteJourney, getAllJourneys } from "../Api/journeys";
+import { getUserProfile } from "../Api";
+import { RainbowButton } from "@/components/ui/rainbow-button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 /* Visibility: eye (public) / lock (private) */
 const IconVisibilityPublic = ({ className }) => (
@@ -23,23 +26,31 @@ const IconNotes = ({ className }) => (
 
 const Home = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [data, setData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [journeyIdToDelete, setJourneyIdToDelete] = useState(null);
 
-  const deleteOneJourney = async (jid) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this journey?");
-  
-    if (isConfirmed) {
-      try {
-        await deleteJourney(jid);
-        console.log("Journey deleted successfully.");
-        fetchData()
-      } catch (error) {
-        console.error("Error deleting journey:", error);
-      }
-    } else {
-      console.log("Deletion canceled.");
+  const openDeleteConfirm = (jid) => {
+    setJourneyIdToDelete(jid);
+    setDeleteConfirmOpen(true);
+  };
+
+  const closeDeleteConfirm = () => {
+    setDeleteConfirmOpen(false);
+    setJourneyIdToDelete(null);
+  };
+
+  const deleteOneJourney = async () => {
+    if (!journeyIdToDelete) return;
+    try {
+      await deleteJourney(journeyIdToDelete);
+      fetchData();
+      closeDeleteConfirm();
+    } catch (error) {
+      console.error("Error deleting journey:", error);
     }
   };
 
@@ -51,6 +62,10 @@ const Home = () => {
     }
   };
   
+
+  useEffect(() => {
+    getUserProfile(setUser).catch(() => setUser(null));
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -75,6 +90,16 @@ const Home = () => {
     <>
       <section className="min-h-[90vh] bg-background text-foreground antialiased">
         <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8">
+          {/* Welcome message at start of home */}
+          <div className="mb-8 rounded-xl border border-border bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 sm:p-6 text-card-foreground">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              Welcome back{user?.username ? `, ${user.username}` : ""}!
+            </h2>
+            <p className="mt-1 text-muted-foreground text-sm sm:text-base">
+              Here are your learning journeys. Open one to continue or create a new one to get started.
+            </p>
+          </div>
+
           {/* What you can do – quick wayfinding (top) */}
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-foreground mb-4">What you can do</h2>
@@ -110,12 +135,9 @@ const Home = () => {
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
             Your Journeys
           </h1>
-          <p className="mt-1 text-muted-foreground text-sm sm:text-base mb-4">
-            Click a journey to open it · Use search to filter · Create one to get started
-          </p>
           {/* Quick stats + shortcuts */}
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/80 text-sm font-medium text-foreground">
@@ -261,16 +283,17 @@ const Home = () => {
                           </Link>
                         </td>
                         <td className="px-4 sm:px-5 py-3.5 align-middle" onClick={(e) => e.stopPropagation()}>
-                          <button
+                          <RainbowButton
                             type="button"
-                            onClick={() => deleteOneJourney(d.id)}
-                            className="inline-flex items-center gap-1.5 text-sm font-medium text-destructive hover:bg-destructive/10 hover:scale-[1.02] rounded-lg px-2.5 py-1.5 transition-all duration-200 focus:outline-none focus:ring-0 active:scale-[0.98]"
+                            size="sm"
+                            onClick={() => openDeleteConfirm(d.id)}
+                            className="inline-flex gap-1.5 text-destructive hover:opacity-90"
                           >
                             <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                             Delete
-                          </button>
+                          </RainbowButton>
                         </td>
                       </tr>
                     ))}
@@ -300,6 +323,18 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Centered delete confirmation – replaces browser confirm */}
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onClose={closeDeleteConfirm}
+        title="Delete journey?"
+        message="Are you sure you want to delete this journey? This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={deleteOneJourney}
+        variant="danger"
+      />
 
       {/* <!-- End block -->
 
@@ -753,20 +788,18 @@ const Home = () => {
             <p className="mb-4 text-muted-foreground">
               Are you sure you want to delete this item?
             </p>
-            <div className="flex justify-center items-center space-x-4">
-              <button
+            <div className="flex justify-center items-center gap-3">
+              <RainbowButton
                 data-modal-toggle="deleteModal"
                 type="button"
-                className="py-2 px-3 text-sm font-medium text-muted-foreground bg-card rounded-lg border border-border hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-0 focus:z-10"
+                variant="outline"
+                size="sm"
               >
                 No, cancel
-              </button>
-              <button
-                type="submit"
-                className="py-2 px-3 text-sm font-medium text-center text-destructive-foreground bg-destructive rounded-lg hover:bg-destructive/90 focus:outline-none focus:ring-0"
-              >
+              </RainbowButton>
+              <RainbowButton type="button" size="sm" className="text-destructive-foreground">
                 Yes, I'm sure
-              </button>
+              </RainbowButton>
             </div>
           </div>
         </div>

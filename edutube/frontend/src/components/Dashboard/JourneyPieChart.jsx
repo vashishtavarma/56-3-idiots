@@ -1,29 +1,35 @@
 import React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Filler } from 'chart.js';
-import { Doughnut, Line } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
+import { useTheme } from '../../contexts/ThemeContext';
 
-// Registering the required Chart.js components
 ChartJS.register(
-  ArcElement, // Required for Doughnut and Pie charts
+  ArcElement,
   Tooltip,
   Legend,
-  CategoryScale, // Required for Line charts
+  CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  Filler // Required for fill option
+  Filler
 );
 
+// Explicit colors so Chart.js legend is readable in both themes (canvas doesn't resolve CSS vars reliably)
+const LEGEND_COLOR_LIGHT = '#374151';
+const LEGEND_COLOR_DARK = '#e5e7eb';
+
 const JourneyPieChart = ({ data, title }) => {
+  const { isDark } = useTheme();
+  const legendColor = isDark ? LEGEND_COLOR_DARK : LEGEND_COLOR_LIGHT;
+
   const chartData = {
     labels: ['Completed', 'Remaining'],
     datasets: [
       {
         label: title,
         data: [data.completed, data.remaining],
-        backgroundColor: ['#4f46e5', 'gray'],
-        hoverBackgroundColor: [ '#6366f1','#6a7979c2'],
-        
+        backgroundColor: ['#16a34a', 'gray'],
+        hoverBackgroundColor: ['#22c55e', '#6a7979c2'],
       },
     ],
   };
@@ -32,16 +38,19 @@ const JourneyPieChart = ({ data, title }) => {
     plugins: {
       legend: {
         labels: {
-          color: 'white', 
+          color: legendColor,
+          font: { size: 13 },
         },
       },
     },
   };
 
   return (
-    <div className="bg-card border border-border p-4 rounded-lg shadow text-center text-card-foreground">
-      <h4 className="text-lg font-medium text-foreground mb-4">{title}</h4>
-      <Doughnut data={chartData} options={options} />
+    <div className="bg-card border border-border p-6 rounded-xl shadow-sm text-center text-card-foreground">
+      <h4 className="text-xl font-semibold text-foreground mb-4">{title}</h4>
+      <div className="max-w-xs mx-auto">
+        <Doughnut data={chartData} options={options} />
+      </div>
     </div>
   );
 };

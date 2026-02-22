@@ -107,15 +107,18 @@ class ChapterCreateResponse(BaseModel):
 # ----- Notes -----
 class NoteCreate(BaseModel):
     content: str
+    title: str | None = ""
 
 
 class NoteUpdate(BaseModel):
-    content: str
+    content: str | None = None
+    title: str | None = None
 
 
 class NoteResponse(BaseModel):
     id: str
     content: str
+    title: str | None = ""
     chapter_id: str
     journey_id: str
     created_at: datetime | None = None
