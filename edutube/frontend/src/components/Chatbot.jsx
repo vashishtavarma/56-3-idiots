@@ -45,7 +45,7 @@ const Chatbot = () => {
     try {
       console.log('Sending message to chatbot API:', messageToSend);
       
-      const response = await fetch('http://localhost:5000/api/v1/chatbot/chat', {
+      const response = await fetch('http://65.1.133.54:5000/api/v1/chatbot/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

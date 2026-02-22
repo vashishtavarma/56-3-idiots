@@ -1,0 +1,21 @@
+# systemd unit for EduTube FastAPI backend
+# Copy to EC2: sudo cp edutube-api.service /etc/systemd/system/
+# Then: sudo systemctl daemon-reload && sudo systemctl enable edutube-api && sudo systemctl start edutube-api
+#
+# Adjust User and paths if needed (e.g. ec2-user, or different repo path).
+
+[Unit]
+Description=EduTube FastAPI Backend
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/hal-hackathon/edutube/backend
+Environment="PATH=/home/ubuntu/hal-hackathon/edutube/backend/venv/bin"
+ExecStart=/home/ubuntu/hal-hackathon/edutube/backend/venv/bin/uvicorn main:app --host 127.0.0.1 --port 5000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
