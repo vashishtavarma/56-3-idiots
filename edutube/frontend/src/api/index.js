@@ -1,4 +1,4 @@
-// HTTPS required when frontend is on HTTPS (e.g. Amplify). See backend/HTTPS_CloudFront.md.
+// API base: HTTPS only; port 443 when required (default for HTTPS).
 const API_BASE = "https://65.1.133.54";
 export const apiurl = `${API_BASE}/api/v1`;
 
