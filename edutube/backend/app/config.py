@@ -9,7 +9,9 @@ class Settings(BaseSettings):
 
     # Server
     port: int = 5000
-    frontend_url: str = "http://localhost:5173"
+    # Comma-separated list of allowed frontend origins for CORS.
+    # Default targets the deployed Amplify app; override via FRONTEND_URL in .env for local dev.
+    frontend_url: str = "https://vashishta.d12rp6k6j03qru.amplifyapp.com"
 
     # Auth
     jwt_secret: str = "super-secure-jwt-secret-key-for-development-only"

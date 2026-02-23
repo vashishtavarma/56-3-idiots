@@ -4,8 +4,8 @@
  * All data persists in backend (MongoDB).
  */
 
-const API_BASE = 'http://localhost:5000/api/v1';
-const FRONTEND_BASE = 'http://localhost:5173';
+const API_BASE = 'https://d69mtih07yogo.cloudfront.net/api/v1';
+const FRONTEND_BASE = 'https://vashishta.d12rp6k6j03qru.amplifyapp.com';
 const STORAGE_TOKEN_KEY = 'edutube_token';
 const STORAGE_USER_KEY = 'edutube_user';
 

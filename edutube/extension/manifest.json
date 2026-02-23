@@ -9,9 +9,8 @@
   },
   "permissions": ["sidePanel", "storage"],
   "host_permissions": [
-    "http://localhost:5173/*",
-    "http://localhost:5000/*",
-    "https://*/*"
+    "https://vashishta.d12rp6k6j03qru.amplifyapp.com/*",
+    "https://d69mtih07yogo.cloudfront.net/*"
   ],
   "background": {
     "service_worker": "background.js"
