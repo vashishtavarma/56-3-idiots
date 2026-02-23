@@ -160,12 +160,8 @@ const Landing = () => {
           <div className="landing-hero-bg" aria-hidden>
             <img
               ref={heroImageRef}
-              src="/hero.png"
+              src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80"
               alt=""
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80";
-              }}
             />
           </div>
           <div className="landing-hero-overlay" aria-hidden />
