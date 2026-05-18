@@ -7,13 +7,13 @@ motor>=3.6.0
 pymongo>=4.10,<5
 
 # Auth and security
-python-jose[cryptography]==3.3.0
+python-jose[cryptography]==3.4.0
 bcrypt>=4.0,<5
 
 # Validation and env
 pydantic[email]==2.10.3
 pydantic-settings==2.6.1
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 email-validator>=2.0.0
 
 # HTTP client for YouTube API
